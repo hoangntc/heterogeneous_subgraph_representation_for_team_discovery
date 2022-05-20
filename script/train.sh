@@ -7,7 +7,7 @@ python ../HSGNN/train_config.py -config_path ../HSGNN/config_files/dblp_fold_6/c
 python ../HSGNN/train_config.py -config_path ../HSGNN/config_files/dblp_fold_7/config.json >> ~/github/heterogeneous_subgraph_representation_for_team_discovery/log/dblp_fold_7.txt 2>&1
 python ../HSGNN/train_config.py -config_path ../HSGNN/config_files/dblp_fold_8/config.json >> ~/github/heterogeneous_subgraph_representation_for_team_discovery/log/dblp_fold_8.txt 2>&1
 python ../HSGNN/train_config.py -config_path ../HSGNN/config_files/dblp_fold_9/config.json >> ~/github/heterogeneous_subgraph_representation_for_team_discovery/log/dblp_fold_9.txt 2>&1
-python ../HSGNN/train_config.py -config_path ../HSGNN/config_files/dblp_fold_10/config.json >> ~/github/heterogeneous_subgraph_representation_for_team_discovery/log/imdb_fold_10.txt 2>&1
+python ../HSGNN/train_config.py -config_path ../HSGNN/config_files/dblp_fold_10/config.json >> ~/github/heterogeneous_subgraph_representation_for_team_discovery/log/dblp_fold_10.txt 2>&1
 
 python ../HSGNN/train_config.py -config_path ../HSGNN/config_files/imdb_fold_1/config.json >> ~/github/heterogeneous_subgraph_representation_for_team_discovery/log/imdb_fold_1.txt 2>&1
 python ../HSGNN/train_config.py -config_path ../HSGNN/config_files/imdb_fold_2/config.json >> ~/github/heterogeneous_subgraph_representation_for_team_discovery/log/imdb_fold_2.txt 2>&1
