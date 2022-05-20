@@ -1,9 +1,15 @@
 # This env install everything except some members of pytorch family
 # Remember to replace the path at the end with yours
-1- conda env create --file sub.yml 
+1- conda env create --file pygnn.yml 
 
-# Install the pytorch + cuda11.1 for the environment
-2- conda install pytorch torchvision torchaudio cudatoolkit=11.1 -c pytorch -c nvidia
+# Install the pytorch for the environment
+2- Follow the instruction in the link: https://pytorch.org/get-started/locally/
 
-# Install the pytorch-geometric on top of new versio of pytorch from step 2
-3- conda install pytorch-geometric -c rusty1s -c conda-forge
+# Install the pytorch-geometric on top of new version of pytorch from step 2
+3- pip install torch-scatter -f https://data.pyg.org/whl/torch-${TORCH}+${CUDA}.html
+4- pip install torch-sparse -f https://data.pyg.org/whl/torch-${TORCH}+${CUDA}.html
+5- pip install torch-cluster -f https://data.pyg.org/whl/torch-${TORCH}+${CUDA}.html
+6- pip install torch-spline-conv -f https://data.pyg.org/whl/torch-${TORCH}+${CUDA}.html
+7- pip install torch-geometric
+
+where ${TORCH} and ${CUDA} is version of Pytorch and Cuda in your machine.
