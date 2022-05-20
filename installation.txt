@@ -1,0 +1,9 @@
+# This env install everything except some members of pytorch family
+# Remember to replace the path at the end with yours
+1- conda env create --file sub.yml 
+
+# Install the pytorch + cuda11.1 for the environment
+2- conda install pytorch torchvision torchaudio cudatoolkit=11.1 -c pytorch -c nvidia
+
+# Install the pytorch-geometric on top of new versio of pytorch from step 2
+3- conda install pytorch-geometric -c rusty1s -c conda-forge
