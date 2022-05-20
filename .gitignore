@@ -4,9 +4,6 @@ dataset/*
 !log/
 log/*
 !log/.gitkeep
-!script/
-script/*
-!scrip/train.sh
 src/config_files/*
 !src/config_files/dblp_fold_1
 !src/config_files/imdb_fold_1
