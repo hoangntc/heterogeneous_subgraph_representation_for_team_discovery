@@ -12,7 +12,6 @@ import sys
 import pathlib
 import random
 import string
-import datetime
 
 # Pytorch
 import torch
@@ -243,8 +242,8 @@ def build_model(args, trial = None):
         #     hyperparameters['lstm_aggregator'] = args.lstm_aggregator
         # if args.graph_aggregator:
         #     hyperparameters['graph_aggregator'] = args.graph_aggregator
-        # if args.n_anchor_patches_structure:
-        #     hyperparameters['n_anchor_patches_structure'] = args.n_anchor_patches_structure
+        if args.n_anchor_patches_structure:
+            hyperparameters['n_anchor_patches_structure'] = args.n_anchor_patches_structure
             
     elif trial is not None: #select hyperparams from ranges specified in trial
         hyperparameters = get_hyperparams_optuma(args, trial)
@@ -295,12 +294,11 @@ def build_trainer(args, hyperparameters, trial = None):
 
     # set epochs, gpus, gradient clipping, etc. 
     # if 'no_gpu' in run config, then use CPU
-    trainer_kwargs = {
-                    'max_epochs': hyperparameters['max_epochs'],
+    trainer_kwargs={'max_epochs': hyperparameters['max_epochs'],
                     "gpus": 1,
                     "num_sanity_val_steps":0,
                     "progress_bar_refresh_rate":p_refresh,
-                    "gradient_clip_val": hyperparameters['grad_clip'],
+                    "gradient_clip_val": hyperparameters['grad_clip']
                     }
 
     # set auto learning rate finder param
@@ -337,12 +335,10 @@ def build_trainer(args, hyperparameters, trial = None):
         if (not args.no_save) and (not args.no_checkpointing):
             trainer_kwargs["checkpoint_callback"] = ModelCheckpoint(
                 filepath=os.path.join(logger.log_dir, "{epoch}-{val_micro_f1:.2f}-{val_acc:.2f}-{val_auroc:.2f}"),
-                save_top_k=-1,
+                save_top_k=5,
                 verbose=True,
                 monitor=args.monitor_metric,
-                mode='max',
-                period=2,
-                # every_n_epochs=1,
+                mode='max'
                 )
 
         # if trial is not None and args.opt_prune:
@@ -521,11 +517,5 @@ def main(args):
         print(study.best_params)
     
 if __name__ == "__main__":
-    starting_time = datetime.datetime.now()
-    print('Starting time:', starting_time.strftime("%m/%d/%Y, %H:%M:%S"))
     args = parse_arguments()
     main(args)
-    ending_time = datetime.datetime.now()
-    print('Starting time:', starting_time.strftime("%m/%d/%Y, %H:%M:%S"))
-    print('Ending time:', ending_time.strftime("%m/%d/%Y, %H:%M:%S"))
-    print('Execution time:', ending_time - starting_time)

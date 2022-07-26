@@ -12,3 +12,4 @@ src/config_files/*
 experiment/output/*
 experiment/lightning_logs/*
 misc/*
+script/*

@@ -7,7 +7,6 @@ import json
 import random
 import numpy as np
 import argparse
-import datetime
 
 class Namespace:
     def __init__(self, **kwargs):
@@ -58,34 +57,38 @@ def main(args_script):
         "call" : args_to_function
     }
 
-    # seed = 2022
-    # args.seed = seed
-    args.tb_dir = os.path.join(config.PROJECT_ROOT, args.tb_dir)
-    args.tb_version = "version_time"
-    args.max_epochs = 450
-    if not args_script.no_train: #train the model from scratch
-        print('Train model from scratch')
-        args.noTrain = False
-        args.runTest = True
-        # for eary stopping
-        args.opt_prune = False
-        args.opt_patience = 450
-        test_results = tr.train_model(args)
-    else: #read in the model - NOTE that this doesn't differentiaate .ckpt files if multiple are saved
-        model_path = os.path.join(config.PROJECT_ROOT,args.tb_dir, args.tb_name, args.tb_version)
-        for file in os.listdir(model_path):
-            if file.endswith(".ckpt") and file.startswith("epoch"):
-                outpath = file 
-        args.noTrain = True
-        args.no_save = True
-        args.restoreModelPath = model_path
-        args.restoreModelName = outpath
-        test_results = tr.train_model(args)
+    # for each seed, train a new model
+    for seed in range(10): 
+        print(f"Running Round {seed+1}")
 
-    # keep track of test results for each random seed run
-    exp_results['test_micro_f1'].append(float(test_results['test_micro_f1']))
-    exp_results['test_acc'].append(float(test_results['test_acc']))
-    exp_results['test_auroc'].append(float(test_results['test_auroc']))
+        # either use a random seed from 0 to 1000000 or use the default random seeds 0-9
+        args.seed = random.randint(0, 1000000) if args_script.random_seeds else seed
+        print('Seed used: ', args.seed)
+        args.tb_dir = os.path.join(config.PROJECT_ROOT, args.tb_dir)
+        args.tb_version = f"version_{seed}"
+        if not args_script.no_train: #train the model from scratch
+            print('Train model from scratch')
+            args.noTrain = False
+            args.runTest = True
+            # for eary stopping
+            args.opt_prune = True
+            args.opt_patience = 20
+            test_results = tr.train_model(args)
+        else: #read in the model - NOTE that this doesn't differentiaate .ckpt files if multiple are saved
+            model_path = os.path.join(config.PROJECT_ROOT,args.tb_dir, args.tb_name, args.tb_version)
+            for file in os.listdir(model_path):
+                if file.endswith(".ckpt") and file.startswith("epoch"):
+                    outpath = file 
+            args.noTrain = True
+            args.no_save = True
+            args.restoreModelPath = model_path
+            args.restoreModelName = outpath
+            test_results = tr.train_model(args)
+
+        # keep track of test results for each random seed run
+        exp_results['test_micro_f1'].append(float(test_results['test_micro_f1']))
+        exp_results['test_acc'].append(float(test_results['test_acc']))
+        exp_results['test_auroc'].append(float(test_results['test_auroc']))
     
     exp_results["test_acc_mean"] = np.mean(exp_results['test_acc'])
     exp_results["test_acc_sd"] = np.std(exp_results['test_acc'])
@@ -98,16 +101,10 @@ def main(args_script):
     print(exp_results)
 
     # write results for all runs to file
-    exp_results_file = open(os.path.join(config.PROJECT_ROOT, args.tb_dir, args.tb_name, "experiment_results_time.json"),"w")
+    exp_results_file = open(os.path.join(config.PROJECT_ROOT, args.tb_dir, args.tb_name, "experiment_results.json"),"w")
     exp_results_file.write(json.dumps(exp_results, indent=4))
     exp_results_file.close()
 
 if __name__ == "__main__":
-    starting_time = datetime.datetime.now()
-    print('Starting time:', starting_time.strftime("%m/%d/%Y, %H:%M:%S"))
     args = parse_arguments()
     main(args)
-    ending_time = datetime.datetime.now()
-    print('Starting time:', starting_time.strftime("%m/%d/%Y, %H:%M:%S"))
-    print('Ending time:', ending_time.strftime("%m/%d/%Y, %H:%M:%S"))
-    print('Execution time:', ending_time - starting_time)
